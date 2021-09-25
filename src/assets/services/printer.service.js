@@ -26,46 +26,48 @@ export class PrinterService {
     this.port = printer.portName;
     this.emulation = getEmulation(printer.modelName);
     return new Promise((resolve, reject) => {
-      StarPRNT.connect(this.port, this.emulation, false)
-        .then(r => {
-          console.log('imprimante connecté', r);
-          resolve(r);
-        })
-        .catch(err => reject(err));
+      try {
+        StarPRNT.connect(this.port, this.emulation, false)
+          .then(r => {
+            console.log('imprimante connecté', r);
+            resolve(r);
+          })
+          .catch(err => reject(err));
+      } catch (err) {
+        reject(err);
+      }
     });
   }
 
   findAllPrinters(type) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       StarPRNT.portDiscovery(type)
         .then(res => resolve(res))
         .catch(err => reject(err));
     });
   }
 
-  printerTicket() {
+  printerTicket(imageUrl) {
     return new Promise((resolve, reject) => {
       let commands = [];
-      commands.push({
-        append:
-          '  TEST IMPRIMANTE \n' +
-          '123 Star Road\n' +
-          'City, State 12345\n' +
-          '\n',
-      });
+      commands.push({appendBitmap: imageUrl});
       commands.push({
         appendCutPaper: StarPRNT.CutPaperAction.PartialCutWithFeed,
       });
 
-      StarPRNT.print(this.emulation, commands)
-        .then(r => {
-          console.log('Impression ok', r);
-          resolve(r);
-        })
-        .catch(err => {
-          console.log("Erreur d'impression", err);
-          reject(err);
-        });
+      try {
+        StarPRNT.print(this.emulation, commands, this.port)
+          .then(r => {
+            console.log('Impression ok', r);
+            resolve(r);
+          })
+          .catch(err => {
+            console.log("Erreur d'impression", err);
+            reject(err);
+          });
+      } catch (err) {
+        reject(err);
+      }
     });
   }
 

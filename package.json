@@ -12,7 +12,12 @@
   "dependencies": {
     "react": "17.0.2",
     "react-native": "0.65.1",
-    "react-native-star-prnt": "^1.1.0"
+    "react-native-bluetooth-escpos-printer": "^0.0.5",
+    "react-native-esc-pos-printer": "^1.0.1",
+    "react-native-image-base64": "^0.1.4",
+    "react-native-star-prnt": "^1.1.0",
+    "react-native-sunmi-inner-printer": "^0.1.6",
+    "react-native-view-shot": "^3.1.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

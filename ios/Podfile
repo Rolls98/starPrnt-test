@@ -14,6 +14,12 @@ target 'printerTest' do
 
   pod 'RNStarPrnt', :path => '../node_modules/react-native-star-prnt'
 
+  pod 'react-native-view-shot', :path => '../node_modules/react-native-view-shot'
+
+  pod 'react-native-image-base64', :path => '../node_modules/react-native-image-base64'
+
+  pod 'react-native-esc-pos-printer', :path => '../node_modules/react-native-esc-pos-printer'
+
   target 'printerTestTests' do
     inherit! :complete
     # Pods for testing
