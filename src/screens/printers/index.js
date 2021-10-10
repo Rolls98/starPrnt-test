@@ -108,7 +108,7 @@ const index = () => {
     try {
       if (printSystem === 'escPos') {
         setState('Recherche en cours...');
-        EscPosPrinter.discover({usbSerialNumber: true})
+        EscPosPrinter.discovery({usbSerialNumber: true})
           .then(printers => {
             setState(`${printers.length} imprimante(s) trouvée(s)`);
             setEscPrinters(printers);
@@ -184,9 +184,12 @@ const index = () => {
       const printing = new EscPosPrinter.printing();
       const status = await printing
         .initialize()
+        .text('test printer')
         .imageAsset(image, 200)
         .cut()
-        .send();
+        .send()
+        .then(() => setState('imprimante terminé'))
+        .catch(e => setMessage('Une erreur est survenue: ' + e.message));
       setState('impression terminée => ' + status);
     } catch (err) {
       setMessage('Une erreur est survenue: ' + err.message);
@@ -263,7 +266,8 @@ const index = () => {
                     printer={printer}
                     key={id}
                     checked={
-                      printerSelected?.modelName === printer.modelName ||
+                      (printSystem === 'StarPrnt' &&
+                        printerSelected?.modelName === printer.modelName) ||
                       (printSystem === 'escPos' &&
                         printerSelected.target === printer.target)
                     }
