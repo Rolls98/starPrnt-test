@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.pinmi.react.printer.RNPrinterPackage;
 import com.reactnativeescposprinter.EscPosPrinterPackage;
 import fr.snapp.imagebase64.RNImgToBase64Package;
 import fr.greweb.reactnativeviewshot.RNViewShotPackage;
@@ -37,6 +38,7 @@ public class MainApplication extends Application implements ReactApplication {
           //packages.add(new SunmiInnerPrinterPackage());
          return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNPrinterPackage(),
             new EscPosPrinterPackage(),
             new RNImgToBase64Package(),
             new RNViewShotPackage(),

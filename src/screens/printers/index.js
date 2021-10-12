@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, {useRef, useEffect, useState} from 'react';
 import {
   View,
@@ -13,6 +14,7 @@ import SunmiInnerPrinter from 'react-native-sunmi-inner-printer';
 import EscPosPrinter, {
   getPrinterSeriesByName,
 } from 'react-native-esc-pos-printer';
+import {RNUSBPrinter} from "react-native-usb-printer"
 
 //import ImgToBase64 from 'react-native-image-base64';
 
@@ -70,6 +72,7 @@ const index = () => {
   //printers LISTS
   const [printers, setPrinters] = useState([]);
   const [escPrinters, setEscPrinters] = useState([]);
+  const [printersUsb,setPrintersUsb] = useState([]);
 
   const [loading, setLoading] = useState(false);
   const [printing, setPrinting] = useState(false);
@@ -102,13 +105,13 @@ const index = () => {
   const [printerSelected, setPrinterSelected] = useState(null);
   const [oldPrinter, setOldPrinter] = useState(null);
 
-  const handleFindPrinters = () => {
+  const handleFindPrinters = async () => {
     setLoading(true);
     setMessage('');
     try {
       if (printSystem === 'escPos') {
         setState('Recherche en cours...');
-        EscPosPrinter.discovery({usbSerialNumber: true})
+        EscPosPrinter.discover({})
           .then(printers => {
             setState(`${printers.length} imprimante(s) trouvée(s)`);
             setEscPrinters(printers);
@@ -120,7 +123,12 @@ const index = () => {
             setState('');
             setLoading(false);
           });
-      } else {
+      } else if(printSystem === "OnelineUsb"){
+        let devices = await RNUSBPrinter.getUSBDeviceList();
+        setState(`${devices.length} imprimante(s) par usb trouvée(s)`);
+       setPrintersUsb(devices);
+       setLoading(false);
+      }else {
         printerService
           .findAllPrinters(printType)
           .then(res => {
@@ -140,6 +148,18 @@ const index = () => {
       setMessage('Une erreur est survenue: ' + err.message);
     }
   };
+
+  const onPrintUsb = async ()=>{
+    const {vendor_id,product_id} = printerSelected;
+    const printer = await RNUSBPrinter.connectPrinter(vendor_id,product_id);
+    setState('Imprimante connecté');
+    RNUSBPrinter.printText("<C>Impression test</C>\n");
+    RNUSBPrinter.printText("<C>Impression test</C>\n");
+    RNUSBPrinter.printText("<C>Impression test</C>\n");
+    RNUSBPrinter.printText("<C>Impression test</C>\n");
+    RNUSBPrinter.printBillTextWithCut("<C>Fin</C>\n");
+    setState('Impression terminée');
+  }
 
   const onPrint = () => {
     setPrinting(true);
@@ -217,7 +237,7 @@ const index = () => {
           Choisissez un système :{' '}
         </Text>
         <View style={styles.flexRow}>
-          {['StarPrnt', 'Sumni', 'escPos'].map((system, id) => {
+          {['StarPrnt', 'Sumni', 'escPos',"OnelineUsb"].map((system, id) => {
             return (
               <View key={id} style={styles.flexRow}>
                 <Radio
@@ -231,12 +251,13 @@ const index = () => {
             );
           })}
         </View>
-        {(printSystem === 'StarPrnt' || printSystem === 'escPos') && (
+        {(['StarPrnt','escPos','OnelineUsb'].includes(printSystem)) && (
           <>
+           {['StarPrnt','escPos'].includes(printSystem) && <>
             <Text style={{marginBottom: 10}}>
               Chercher une imprimante par :{' '}
             </Text>
-            <View style={styles.flexRow}>
+           <View style={styles.flexRow}>
               {types.map((type, id) => {
                 return (
                   <View key={id} style={styles.flexRow}>
@@ -250,7 +271,7 @@ const index = () => {
                   </View>
                 );
               })}
-            </View>
+            </View></>}
 
             <View style={[styles.flexRow, {justifyContent: 'center'}]}>
               <TouchableOpacity onPress={handleFindPrinters} style={styles.btn}>
@@ -259,7 +280,7 @@ const index = () => {
                 </Text>
               </TouchableOpacity>
             </View>
-            {(printSystem === 'escPos' ? escPrinters : printers).map(
+            {(printSystem === 'escPos' ? escPrinters :printSystem === 'OnelineUsb' ?printersUsb :printers).map(
               (printer, id) => {
                 return (
                   <Printer
@@ -269,7 +290,7 @@ const index = () => {
                       (printSystem === 'StarPrnt' &&
                         printerSelected?.modelName === printer.modelName) ||
                       (printSystem === 'escPos' &&
-                        printerSelected.target === printer.target)
+                        printerSelected.target === printer.target) || (printSystem === "OnelineUsb" && printerSelected?.device_id === printer.device_id)
                     }
                     onSelectPrinter={onSelectPrinter}
                     name="printer"
@@ -288,7 +309,7 @@ const index = () => {
                   ? onSumniPrint
                   : printSystem === 'escPos'
                   ? onEscPrint
-                  : onPrint
+                  :printSystem === 'OnelineUsb'?onPrintUsb: onPrint
               }
               style={styles.btn}>
               <Text style={{color: 'white'}}>
