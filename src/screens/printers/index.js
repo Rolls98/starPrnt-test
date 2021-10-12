@@ -161,7 +161,6 @@ const index = () => {
     await RNUSBPrinter.printText(
       `<L>3</L><C>Composition:Menu-GRAND</C><R>3 EUR</R>\n`,
     );
-    await RNUSBPrinter.printText(`<L>Qte</L><C>Produits</C><R>Tarif</R>\n`);
     await RNUSBPrinter.printText(`<L>1</L><C>Coca</C><R>1 EUR</R>\n`);
     await RNUSBPrinter.printText(`<L>3</L><C>Coca</C><R>3 EUR</R>\n`);
     await RNUSBPrinter.printText(
