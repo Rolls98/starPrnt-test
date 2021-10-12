@@ -59,7 +59,7 @@ const Radio = ({checked, margin = {}, onPress = () => {}}) => {
 
 const Printer = ({printer, checked, onSelectPrinter}) => (
   <Pressable style={styles.flexRow} onPress={() => onSelectPrinter(printer)}>
-    <Text>{printer.modelName || printer.name || 'UNKNOWN'}</Text>
+    <Text>{printer.modelName || printer.name || printer.device_name || 'UNKNOWN'}</Text>
     <Radio
       checked={checked}
       margin={{ml: 10}}
