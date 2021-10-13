@@ -189,8 +189,8 @@ const index = () => {
     await USBPrinter.printText(
       `<CM>------------------------------------------</CM>\n\n`,
     );
-    await USBPrinter.printText(`<L>Total</L> <R>8 EUR<R>`);
-    await USBPrinter.printText(`<L>Livraison</L> <R>0 EUR</R>`);
+    await USBPrinter.printText(`<L>Total</L> <R>8 EUR<R>\n`);
+    await USBPrinter.printText(`<L>Livraison</L> <R>0 EUR</R>\n`);
     await USBPrinter.printText(
       `<CM>------------------------------------------</CM>\n\n`,
     );
@@ -204,7 +204,7 @@ const index = () => {
     await USBPrinter.printText(
       `<CM>------------------------------------------</CM>\n\n`,
     );
-    await USBPrinter.printText(`<L>Payé en especes</L> <R>8 EUR<R>`);
+    await USBPrinter.printText(`<L>Payé en especes</L> <R>8 EUR<R>\n`);
     await USBPrinter.printText(
       `<CM>------------------------------------------</CM>\n\n`,
     );
