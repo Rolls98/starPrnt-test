@@ -14,7 +14,8 @@ import SunmiInnerPrinter from 'react-native-sunmi-inner-printer';
 import EscPosPrinter, {
   getPrinterSeriesByName,
 } from 'react-native-esc-pos-printer';
-import {RNUSBPrinter} from 'react-native-usb-printer';
+//import {RNUSBPrinter} from 'react-native-usb-printer';
+import {USBPrinter} from 'react-native-thermal-receipt-printer';
 
 //import ImgToBase64 from 'react-native-image-base64';
 
@@ -126,10 +127,18 @@ const index = () => {
             setLoading(false);
           });
       } else if (printSystem === 'OnelineUsb') {
-        let devices = await RNUSBPrinter.getUSBDeviceList();
-        setState(`${devices.length} imprimante(s) par usb trouvée(s)`);
-        setPrintersUsb(devices);
-        setLoading(false);
+        USBPrinter.init()
+          .then(async () => {
+            //list printers
+            let devices = await USBPrinter.getDeviceList();
+            setState(`${devices.length} imprimante(s) par usb trouvée(s)`);
+            setPrintersUsb(devices);
+            setLoading(false);
+          })
+          .catch(err => {
+            setMessage('Une erreur est survenue: ' + err);
+            setLoading(false);
+          });
       } else {
         printerService
           .findAllPrinters(printType)
@@ -153,18 +162,20 @@ const index = () => {
 
   const onPrintUsb = async () => {
     const {vendor_id, product_id} = printerSelected;
-    const printer = await RNUSBPrinter.connectPrinter(vendor_id, product_id);
+    const printer = await USBPrinter.connectPrinter(vendor_id, product_id);
     setState('Imprimante connecté');
-    await RNUSBPrinter.printText(`<L>Qte</L><C>Produits</C><R>Tarif</R>\n`);
-    await RNUSBPrinter.printText(`<L>1</L><C>Coca</C><R>1 EUR</R>\n`);
-    await RNUSBPrinter.printText(`<L>3</L><C>Coca</C><R>3 EUR</R>\n`);
-    await RNUSBPrinter.printText(
-      `<L>3</L><C>Composition:Menu-GRAND</C><R>3 EUR</R>\n`,
+    await USBPrinter.printText(`<L>Text à gauche</L>\n`);
+    await USBPrinter.printText(`<R>Text à droite</R>\n`);
+    await USBPrinter.printText(`<L>Qte</L> <C>Produits</C> <R>Tarif</R>\n`);
+    await USBPrinter.printText(`<L>1</L><C>Coca</C> <R>1 EUR</R>\n`);
+    await USBPrinter.printText(`<L>3</L> <C>Coca</C> <R>3 EUR</R>\n`);
+    await USBPrinter.printText(
+      `<L>3</L> <C>Composition:Menu-GRAND</C> <R>3 EUR</R>\n`,
     );
-    await RNUSBPrinter.printText(`<L>1</L><C>Coca</C><R>1 EUR</R>\n`);
-    await RNUSBPrinter.printText(`<L>3</L><C>Coca</C><R>3 EUR</R>\n`);
-    await RNUSBPrinter.printText(
-      `<L>3</L><C>Composition:Menu-GRAND</C><R>3 EUR</R>\n`,
+    await USBPrinter.printText(`<L>1</L> <C>Coca</C> <R>1 EUR</R>\n`);
+    await USBPrinter.printText(`<L>3</L> <C>Coca</C> <R>3 EUR</R>\n`);
+    await USBPrinter.printText(
+      `<L>3</L> <C>Composition:Menu-GRAND</C> <R>3 EUR</R>\n`,
     );
     setState('Impression terminée');
   };
