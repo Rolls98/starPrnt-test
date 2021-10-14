@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, {useRef, useEffect, useState} from 'react';
 import {
   View,
@@ -14,8 +13,7 @@ import SunmiInnerPrinter from 'react-native-sunmi-inner-printer';
 import EscPosPrinter, {
   getPrinterSeriesByName,
 } from 'react-native-esc-pos-printer';
-//import {RNUSBPrinter} from 'react-native-usb-printer';
-import {USBPrinter} from 'react-native-thermal-receipt-printer';
+import {RNUSBPrinter} from 'react-native-usb-printer';
 
 //import ImgToBase64 from 'react-native-image-base64';
 
@@ -127,18 +125,10 @@ const index = () => {
             setLoading(false);
           });
       } else if (printSystem === 'OnelineUsb') {
-        USBPrinter.init()
-          .then(async () => {
-            //list printers
-            let devices = await USBPrinter.getDeviceList();
-            setState(`${devices.length} imprimante(s) par usb trouvée(s)`);
-            setPrintersUsb(devices);
-            setLoading(false);
-          })
-          .catch(err => {
-            setMessage('Une erreur est survenue: ' + err);
-            setLoading(false);
-          });
+        let devices = await RNUSBPrinter.getUSBDeviceList();
+        setState(`${devices.length} imprimante(s) par usb trouvée(s)`);
+        setPrintersUsb(devices);
+        setLoading(false);
       } else {
         printerService
           .findAllPrinters(printType)
@@ -162,55 +152,19 @@ const index = () => {
 
   const onPrintUsb = async () => {
     const {vendor_id, product_id} = printerSelected;
-    const printer = await USBPrinter.connectPrinter(vendor_id, product_id);
+    const printer = await RNUSBPrinter.connectPrinter(vendor_id, product_id);
     setState('Imprimante connecté');
-    await USBPrinter.printText(`<CB>CHICKEN DRIVE</CB>\n`);
-
-    await USBPrinter.printText(`<CM>Paris,France,Rue 12</CM>\n`);
-    await USBPrinter.printText(`<CM>0606060606</CM>\n\n`);
-    await USBPrinter.printText(
-      `<CM>------------------------------------------</CM>\n\n`,
+    await RNUSBPrinter.printText(`<L>Qte</L><C>Produits</C><R>Tarif</R>\n`);
+    await RNUSBPrinter.printText(`<L>1</L><C>Coca</C><R>1 EUR</R>\n`);
+    await RNUSBPrinter.printText(`<L>3</L><C>Coca</C><R>3 EUR</R>\n`);
+    await RNUSBPrinter.printText(
+      `<L>3</L><C>Composition:Menu-GRAND</C><R>3 EUR</R>\n`,
     );
-    await USBPrinter.printText(`<C>Commande n° 13102104</C>\n`);
-    await USBPrinter.printText(`<C>EMPORTER</C>\n`);
-    await USBPrinter.printText(`<C>13/10/2021 à 20:22:30</C>\n`);
-
-    await USBPrinter.printText(
-      `<CM>------------------------------------------</CM>\n\n`,
+    await RNUSBPrinter.printText(`<L>1</L><C>Coca</C><R>1 EUR</R>\n`);
+    await RNUSBPrinter.printText(`<L>3</L><C>Coca</C><R>3 EUR</R>\n`);
+    await RNUSBPrinter.printText(
+      `<L>3</L><C>Composition:Menu-GRAND</C><R>3 EUR</R>\n`,
     );
-    await USBPrinter.printText(`<L>Qte</L> <C>Produits</C> <R>Tarif</R>\n`);
-    await USBPrinter.printText(`<L>1</L><C>Coca</C> <R>1 EUR</R>\n`);
-    await USBPrinter.printText(`<L>3</L> <C>Coca</C> <R>3 EUR</R>\n`);
-    await USBPrinter.printText(`<C>Composition:Menu-GRAND</C>\n`);
-    await USBPrinter.printText(`<L>1</L> <C>Coca</C> <R>1 EUR</R>\n`);
-    await USBPrinter.printText(`<L>3</L> <C>Coca</C> <R>4 EUR</R>\n`);
-    await USBPrinter.printText(`<C>Composition:Menu-GRAND</C>\n`);
-    await USBPrinter.printText(`<C>Supplements:Sprint</C>\n`);
-    await USBPrinter.printText(
-      `<CM>------------------------------------------</CM>\n\n`,
-    );
-    await USBPrinter.printText(`<L>Total</L> <R>8 EUR<R>\n`);
-    await USBPrinter.printText(`<L>Livraison</L> <R>0 EUR</R>\n`);
-    await USBPrinter.printText(
-      `<CM>------------------------------------------</CM>\n\n`,
-    );
-    await USBPrinter.printText(`<R>TOTAL TTC: 8 EUR</R>\n`);
-    await USBPrinter.printText(`<R>TOTAL HT: 6 EUR</R>€\n`);
-    await USBPrinter.printText(
-      `<CM>------------------------------------------</CM>\n\n`,
-    );
-    await USBPrinter.printText(`<LB>Taux de tva 5,5%: 2 EUR</LB>\n`);
-    await USBPrinter.printText(`<L> HT=6 EUR   TTC=8 EUR</L>\n`);
-    await USBPrinter.printText(
-      `<CM>------------------------------------------</CM>\n\n`,
-    );
-    await USBPrinter.printText(`<L>Payé en especes</L> <R>8 EUR<R>\n`);
-    await USBPrinter.printText(
-      `<CM>------------------------------------------</CM>\n\n`,
-    );
-    await USBPrinter.printText(`<CB>04</CB>\n`);
-    await USBPrinter.printText(`<C>MERCI DE VOTRE VISITE</C>\n\n`);
-    await USBPrinter.printBillTextWithCut(`<C>https://chickendrive.fr</C>\n`);
     setState('Impression terminée');
   };
 
