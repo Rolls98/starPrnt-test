@@ -154,16 +154,16 @@ const index = () => {
     const {vendor_id, product_id} = printerSelected;
     const printer = await RNUSBPrinter.connectPrinter(vendor_id, product_id);
     setState('Imprimante connecté');
-    await RNUSBPrinter.printText(`<L>Qte</L><C>Produits</C><R>Tarif</R>\n`);
-    await RNUSBPrinter.printText(`<L>1</L><C>Coca</C><R>1 EUR</R>\n`);
-    await RNUSBPrinter.printText(`<L>3</L><C>Coca</C><R>3 EUR</R>\n`);
+    await RNUSBPrinter.printText(`<M>Qte</M><C>Produits</C>         <C>Tarif</C>\n`);
+    await RNUSBPrinter.printText(`<M>1</M><C>Coca</C>      <C>1 EUR</C>\n`);
+    await RNUSBPrinter.printText(`<M>3</M><C>Coca</C>      <C>3 EUR</C>\n`);
     await RNUSBPrinter.printText(
-      `<L>3</L><C>Composition:Menu-GRAND</C><R>3 EUR</R>\n`,
+      `<M>3</M><C>Composition:Menu-GRAND</C>      <C>3 EUR</C>\n`,
     );
-    await RNUSBPrinter.printText(`<L>1</L><C>Coca</C><R>1 EUR</R>\n`);
-    await RNUSBPrinter.printText(`<L>3</L><C>Coca</C><R>3 EUR</R>\n`);
+    await RNUSBPrinter.printText(`<M>1</M><C>Coca</C>      <C>1 EUR</C>\n`);
+    await RNUSBPrinter.printText(`<M>3</M><C>Coca</C>      <C>3 EUR</C>\n`);
     await RNUSBPrinter.printText(
-      `<L>3</L><C>Composition:Menu-GRAND</C><R>3 EUR</R>\n`,
+      `<M>3</M><C>Composition:Menu-GRAND</C>      <C>3 EUR</C>\n`,
     );
     setState('Impression terminée');
   };
